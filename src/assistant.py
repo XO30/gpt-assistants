@@ -1,21 +1,38 @@
 from .utils import send_get_request, send_post_request, send_delete_request
 from .utils import HEADERS
-from .utils import Functions
+from .utils import Tools
 
 
-def list_assistants():
+def list_assistants() -> list:
+    """
+    list all assistants
+    :return: list: list of all assistants
+    """
+
     url = "https://api.openai.com/v1/assistants?order=desc&limit=20"
     response = send_get_request(url, HEADERS)
     return [Assistant(**assistant) for assistant in response["data"]]
 
 
-def retrieve_assistant(assistant_id: str):
+def retrieve_assistant(assistant_id: str) -> object:
+    """
+    retrieve an assistant
+    :param assistant_id: str: id of the assistant
+    :return: object: assistant object
+    """
+
     url = f"https://api.openai.com/v1/assistants/{assistant_id}"
     response = send_get_request(url, HEADERS)
     return Assistant(**response)
 
 
-def delete_assistant(assistant_id: str):
+def delete_assistant(assistant_id: str) -> bool:
+    """
+    delete an assistant
+    :param assistant_id: str: id of the assistant
+    :return: bool: True if deleted
+    """
+
     url = f"https://api.openai.com/v1/assistants/{assistant_id}"
     send_delete_request(url, HEADERS)
     return True
@@ -26,106 +43,82 @@ def create_assistant(
         name: str or None = None,
         description: str or None = None,
         instructions: str or None = None,
-        code_interpreter: bool = False,
-        retrieval: bool = False,
-        functions: Functions or None = None,
+        tools: Tools or None = None,
         file_ids: list or None = None,
         metadata: dict or None = None
-):
-    if not name:
-        name = str()
-    if not description:
-        description = str()
-    if not instructions:
-        instructions = str()
-    if not file_ids:
-        file_ids = list()
-    if not metadata:
-        metadata = dict()
-    if not functions:
-        functions = list()
+) -> object:
+    """
+    create a new assistant
+    :param model: str: id of the model
+    :param name: str or None: name of the assistant
+    :param description: str or None: description of the assistant
+    :param instructions: str or None: instructions for the assistant
+    :param tools: Tools or None: tools for the assistant
+    :param file_ids: list or None: list of file ids
+    :param metadata: dict or None: metadata for the assistant
+    :return: object: assistant object
+    """
 
-    tools = []
-    if code_interpreter:
-        tools.append({"type": "code_interpreter"})
-    if retrieval:
-        tools.append({"type": "retrieval"})
-    if functions and isinstance(functions, Functions):
-        for func in functions.functions.values():
-            tools.append(func.description)
+    data = dict()
+    data["model"] = model
+    if name:
+        data["name"] = name
+    if description:
+        data["description"] = description
+    if instructions:
+        data["instructions"] = instructions
+    if file_ids:
+        data["file_ids"] = file_ids
+    if metadata:
+        data["metadata"] = metadata
+    if tools:
+        data["tools"] = tools.get_tools()
 
     url = "https://api.openai.com/v1/assistants"
-
-    data = {
-        "instructions": instructions,
-        "name": name,
-        "description": description,
-        "tools": tools,
-        "model": model,
-        "file_ids": file_ids,
-        "metadata": metadata
-    }
-
     response = send_post_request(url, HEADERS, data)
     return Assistant(**response)
 
 
-def update_assistant(
+def modify_assistant(
         assistant_id: str,
         model: str or None = None,
         name: str or None = None,
         description: str or None = None,
         instructions: str or None = None,
-        code_interpreter: bool or None = None,
-        retrieval: bool or None = None,
-        functions: Functions or None = None,
+        tools: Tools or None = None,
         file_ids: list or None = None,
         metadata: dict or None = None
-):
-    assistant = retrieve_assistant(assistant_id)
+) -> object:
+    """
+    modify an assistant
+    :param assistant_id: str: id of the assistant
+    :param model: str or None: id of the model
+    :param name: str or None: name of the assistant
+    :param description: str or None: description of the assistant
+    :param instructions: str or None: instructions for the assistant
+    :param tools: Tools or None: tools for the assistant
+    :param file_ids: list or None: list of file ids
+    :param metadata: dict or None: metadata for the assistant
+    :return: object: assistant object
+    """
 
-    if not name:
-        name = assistant.name
-    if not description:
-        description = assistant.description
-    if not instructions:
-        instructions = assistant.instructions
-    if not file_ids:
-        file_ids = assistant.file_ids
-    if not metadata:
-        metadata = assistant.metadata
-    if not functions:
-        functions = [tool for tool in assistant.tools if tool["type"] == "function"]
-    else:
-        functions = [func.description for func in functions.functions.values()]
-    if not model:
-        model = assistant.model
-    if code_interpreter is None:
-        code_interpreter = True if {"type": "code_interpreter"} in assistant.tools else False
-    if retrieval is None:
-        retrieval = True if {"type": "retrieval"} in assistant.tools else False
-
-    tools = []
-    if code_interpreter:
-        tools.append({"type": "code_interpreter"})
-    if retrieval:
-        tools.append({"type": "retrieval"})
-    if functions:
-        for func in functions:
-            tools.append(func)
+    data = dict()
+    if model:
+        data["model"] = model
+    if name:
+        data["name"] = name
+    if description:
+        data["description"] = description
+    if instructions:
+        data["instructions"] = instructions
+    if file_ids:
+        data["file_ids"] = file_ids
+    if metadata:
+        data["metadata"] = metadata
+    if tools:
+        data["tools"] = tools.get_tools()
 
     url = f"https://api.openai.com/v1/assistants/{assistant_id}"
-
-    data = {
-        "instructions": instructions,
-        "name": name,
-        "description": description,
-        "tools": tools,
-        "model": model,
-        "file_ids": file_ids,
-        "metadata": metadata
-    }
-
     response = send_post_request(url, HEADERS, data)
     return Assistant(**response)
 
@@ -160,7 +153,12 @@ class Assistant:
     def __str__(self):
         return f"<Assistant {self.name}, id: {self.id}>"
 
-    def info(self):
+    def info(self) -> None:
+        """
+        print assistant info
+        :return: None
+        """
+
         print(f"Name: {self.name}")
         print(f"ID: {self.id}")
         print(f"Object: {self.object}")
@@ -171,39 +169,58 @@ class Assistant:
         print(f"Tools: {self.tools}")
         print(f"File IDs: {self.file_ids}")
         print(f"Metadata: {self.metadata}")
+        return None
 
-    def retrieve(self):
+    def retrieve(self) -> object:
+        """
+        retrieve assistant
+        :return: object: assistant object
+        """
+
         assistant = retrieve_assistant(self.id)
         self.__dict__.update(**assistant.__dict__)
         return assistant
 
-    def delete(self):
+    def delete(self) -> bool:
+        """
+        delete assistant
+        :return: bool: True if deleted
+        """
+
         delete_assistant(self.id)
         self.__dict__.clear()
         del self
         return True
 
-    def update(
+    def modify(
             self,
             model: str or None = None,
             name: str or None = None,
             description: str or None = None,
             instructions: str or None = None,
-            code_interpreter: bool or None = None,
-            retrieval: bool or None = None,
-            functions: Functions or None = None,
+            tools: Tools or None = None,
             file_ids: list or None = None,
             metadata: dict or None = None
-    ):
-        assistant = update_assistant(
+    ) -> object:
+        """
+        modify assistant
+        :param model: str or None: id of the model
+        :param name: str or None: name of the assistant
+        :param description: str or None: description of the assistant
+        :param instructions: str or None: instructions for the assistant
+        :param tools: Tools or None: tools for the assistant
+        :param file_ids: list or None: list of file ids
+        :param metadata: dict or None: metadata for the assistant
+        :return: object: assistant object
+        """
+
+        assistant = modify_assistant(
             self.id,
             model,
             name,
             description,
             instructions,
-            code_interpreter,
-            retrieval,
-            functions,
+            tools,
             file_ids,
             metadata
         )
