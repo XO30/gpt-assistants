@@ -2,7 +2,7 @@ from .utils import send_post_request, send_get_request, send_delete_request
 from .constants import HEADERS
 from .tools import Tools
 from .message import create_message, retrieve_message, list_messages, delete_message, modify_message
-from .run import create_run, retrieve_run, list_runs, modify_run, cancel_run
+from .run import create_run, retrieve_run, list_runs, modify_run, cancel_run, submit_tool_outputs
 
 
 def create_thread() -> object:
@@ -228,7 +228,7 @@ class Thread:
         :return: object: run object
         """
 
-        return submit_tool_output(self.id, run_id, tool_outputs)
+        return submit_tool_outputs(self.id, run_id, tool_outputs)
 
     def cancel_run(self, run_id: str) -> object:
         """

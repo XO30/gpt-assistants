@@ -48,7 +48,7 @@ def send_delete_request(url: str, headers: dict or None = None) -> dict:
         raise Exception(response.text)
 
 
-def send_file(url: str, headers: dict, data:dict, file: dict) -> dict:
+def send_file(url: str, headers: dict, data: dict, file: dict) -> dict:
     """
     send a file
     :param url: str: url to send request to
@@ -63,5 +63,3 @@ def send_file(url: str, headers: dict, data:dict, file: dict) -> dict:
         return response.json()
     else:
         raise Exception(response.text)
-
-

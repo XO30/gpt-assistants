@@ -4,21 +4,24 @@ from gpt_assistants_api.assistant import (
     retrieve_assistant,
     list_assistants,
     delete_assistant,
-    modify_assistant
+    modify_assistant,
 )
 
 from gpt_assistants_api.thread import (
     Thread,
     create_thread,
     retrieve_thread,
-    delete_thread
+    delete_thread,
+    modify_thread,
 )
 
 from gpt_assistants_api.message import (
     Message,
     create_message,
     retrieve_message,
-    delete_message
+    delete_message,
+    modify_message,
+    list_messages,
 )
 
 from gpt_assistants_api.run import (
@@ -44,7 +47,10 @@ from gpt_assistants_api.file import (
     delete_assistant_file,
     list_assistant_files,
     retrieve_message_file,
-    list_message_files
+    list_message_files,
+    delete_file,
 )
 
 from gpt_assistants_api.tools import Tools
+
+from gpt_assistants_api.bot import Bot

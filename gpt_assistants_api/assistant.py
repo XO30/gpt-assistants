@@ -1,7 +1,14 @@
 from .utils import send_get_request, send_post_request, send_delete_request
 from .constants import HEADERS
 from .tools import Tools
-from .file import upload_file, create_assistant_file, list_assistant_files, delete_assistant_file, retrieve_assistant_file, delete_file
+from .file import (
+    upload_file,
+    create_assistant_file,
+    list_assistant_files,
+    delete_assistant_file,
+    retrieve_assistant_file,
+    delete_file
+)
 
 
 def list_assistants() -> list:
@@ -272,6 +279,3 @@ class Assistant:
         """
 
         return retrieve_assistant_file(self.id, file_id)
-
-
-

@@ -36,7 +36,7 @@ def delete_file(file_id: str) -> bool:
     :return: bool: True if successful
     """
 
-    response = send_delete_request(f"https://api.openai.com/v1/files/{file_id}", HEADERS_OLD)
+    send_delete_request(f"https://api.openai.com/v1/files/{file_id}", HEADERS_OLD)
     return True
 
 
@@ -96,7 +96,7 @@ def delete_assistant_file(assistant_id: str, file_id: str) -> bool:
     :return: bool: True if successful
     """
 
-    response = send_delete_request(f"https://api.openai.com/v1/assistants/{assistant_id}/files/{file_id}", HEADERS)
+    send_delete_request(f"https://api.openai.com/v1/assistants/{assistant_id}/files/{file_id}", HEADERS)
     return True
 
 
@@ -111,7 +111,7 @@ def list_assistant_files(assistant_id: str) -> list:
     return [AssistantFile(**file) for file in response["data"]]
 
 
-def retrieve_message_file(thread_id:str, message_id: str, file_id: str) -> object:
+def retrieve_message_file(thread_id: str, message_id: str, file_id: str) -> object:
     """
     retrieve a message file
     :param thread_id: str: id of thread to retrieve file for

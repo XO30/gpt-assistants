@@ -15,7 +15,7 @@ def create_message(thread_id: str, content: str, role: str = 'user', files: list
     """
 
     url = f"https://api.openai.com/v1/threads/{thread_id}/messages"
-    data = {}
+    data = dict()
     data["role"] = role
     data["content"] = content
     file_ids = []
@@ -173,5 +173,3 @@ class Message:
         """
 
         return list_message_files(self.thread_id, self.id)
-
-
