@@ -26,6 +26,9 @@ from gpt_assistants_api.run import (
     create_run,
     retrieve_run,
     list_runs,
+    modify_run,
+    cancel_run,
+    submit_tool_outputs,
 )
 
 from gpt_assistants_api.file import (

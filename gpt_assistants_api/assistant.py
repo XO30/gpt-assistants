@@ -1,6 +1,7 @@
 from .utils import send_get_request, send_post_request, send_delete_request
 from .constants import HEADERS
 from .tools import Tools
+from .file import upload_file, create_assistant_file, list_assistant_files, delete_assistant_file, retrieve_assistant_file, delete_file
 
 
 def list_assistants() -> list:
@@ -159,6 +160,7 @@ class Assistant:
         :return: None
         """
 
+        self.retrieve()
         print(f"Name: {self.name}")
         print(f"ID: {self.id}")
         print(f"Object: {self.object}")
@@ -226,3 +228,50 @@ class Assistant:
         )
         self.__dict__.update(**assistant.__dict__)
         return assistant
+
+    def add_assistant_files(self, file: list) -> bool:
+        """
+        add assistant file
+        :param file: list: list of files to add
+        :return: True if successful
+        """
+
+        self.retrieve()
+        file_ids = self.file_ids
+        for file in file:
+            file = upload_file(file)
+            assistant_file = create_assistant_file(self.id, file.id)
+            file_ids.append(assistant_file.id)
+        self.modify(file_ids=file_ids)
+        return True
+
+    def list_assistant_files(self) -> list:
+        """
+        list assistant files
+        :return: list: list of assistant files
+        """
+
+        return list_assistant_files(self.id)
+
+    def delete_assistant_file(self, file_id: str) -> bool:
+        """
+        delete assistant file
+        :param file_id: str: id of the file
+        :return: bool: True if successful
+        """
+
+        delete_assistant_file(self.id, file_id)
+        delete_file(file_id)
+        return True
+
+    def retrieve_assistant_file(self, file_id: str) -> object:
+        """
+        retrieve assistant file
+        :param file_id: str: id of the file
+        :return: object: assistant file object
+        """
+
+        return retrieve_assistant_file(self.id, file_id)
+
+
+

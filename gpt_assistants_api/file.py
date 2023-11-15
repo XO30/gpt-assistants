@@ -1,4 +1,4 @@
-from .utils import send_post_request, send_get_request, send_delete_request
+from .utils import send_post_request, send_get_request, send_delete_request, send_file
 from .constants import HEADERS, HEADERS_OLD
 
 
@@ -19,12 +19,14 @@ def upload_file(file: str, purpose: str = 'assistants') -> object:
     :param purpose: str: purpose of file
     :return: object: file object
     """
-
-    response = send_post_request("https://api.openai.com/v1/files", HEADERS_OLD, {
+    data = {
         "purpose": purpose,
+    }
+    file = {
         "file": file
-    })
-    return File(**response["object"])
+    }
+    response = send_file("https://api.openai.com/v1/files", HEADERS_OLD, data, file)
+    return File(**response)
 
 
 def delete_file(file_id: str) -> bool:
@@ -46,7 +48,7 @@ def retrieve_file(file_id: str) -> object:
     """
 
     response = send_get_request(f"https://api.openai.com/v1/files/{file_id}", HEADERS_OLD)
-    return File(**response["object"])
+    return File(**response)
 
 
 def retrieve_file_contents(file_id: str) -> any:
@@ -57,7 +59,7 @@ def retrieve_file_contents(file_id: str) -> any:
     """
 
     response = send_get_request(f"https://api.openai.com/v1/files/{file_id}/content", HEADERS_OLD)
-    return response["object"]
+    return response
 
 
 def create_assistant_file(assistant_id: str, file_id: str) -> object:
@@ -69,9 +71,9 @@ def create_assistant_file(assistant_id: str, file_id: str) -> object:
     """
 
     response = send_post_request(f"https://api.openai.com/v1/assistants/{assistant_id}/files", HEADERS, {
-        "file": file_id
+        "file_id": file_id
     })
-    return AssistantFile(**response["object"])
+    return AssistantFile(**response)
 
 
 def retrieve_assistant_file(assistant_id: str, file_id: str) -> object:
@@ -83,7 +85,7 @@ def retrieve_assistant_file(assistant_id: str, file_id: str) -> object:
     """
 
     response = send_get_request(f"https://api.openai.com/v1/assistants/{assistant_id}/files/{file_id}", HEADERS)
-    return AssistantFile(**response["object"])
+    return AssistantFile(**response)
 
 
 def delete_assistant_file(assistant_id: str, file_id: str) -> bool:
@@ -119,7 +121,7 @@ def retrieve_message_file(thread_id:str, message_id: str, file_id: str) -> objec
     """
 
     response = send_get_request(f"https://api.openai.com/v1/threads/{thread_id}/messages/{message_id}/files/{file_id}", HEADERS)
-    return MessageFile(**response["object"])
+    return MessageFile(**response)
 
 
 def list_message_files(thread_id: str, message_id: str) -> list:
@@ -131,17 +133,20 @@ def list_message_files(thread_id: str, message_id: str) -> list:
     """
 
     response = send_get_request(f"https://api.openai.com/v1/threads/{thread_id}/messages/{message_id}/files", HEADERS)
-    return [MessageFile(**file) for file in response["data"]]
+    return [MessageFile(**file) for file in response]
 
 
 class File:
-    def __init__(self, id: str, bytes: str, filename: str, object: str, created_at: int, purpose: str):
+    def __init__(self, id: str, bytes: str, filename: str, object: str, created_at: int, purpose: str, status: str or None = None, status_details: str or None = None):
         self.id = id
         self.bytes = bytes
         self.filename = filename
         self.object = object
         self.created_at = created_at
         self.purpose = purpose
+        self.status = status
+        self.status_details = status_details
+
 
     def __repr__(self):
         return f"<File {self.id}>"
@@ -160,6 +165,8 @@ class File:
         print(f"Purpose: {self.purpose}")
         print(f"Object: {self.object}")
         print(f"Bytes: {self.bytes}")
+        print(f"Status: {self.status}")
+        print(f"Status Details: {self.status_details}")
         return None
 
     def delete(self):
@@ -264,16 +271,16 @@ class MessageFile:
         print(f"Message ID: {self.message_id}")
         return None
 
-    def retrieve(self):
+    def retrieve(self, thread_id: str):
         """
         retrieve message file
         :return: object: message file object
         """
-        message_file = retrieve_message_file(self.thread_id, self.message_id, self.id)
+        message_file = retrieve_message_file(thread_id, self.message_id, self.id)
         self.__dict__.update(**message_file.__dict__)
         return message_file
 
-    def retrieve_contents(self):
+    def retrieve_content(self):
         """
         retrieve message file contents
         :return: any(): message file contents

@@ -2,7 +2,7 @@ from .utils import send_post_request, send_get_request, send_delete_request
 from .constants import HEADERS
 from .tools import Tools
 from .message import create_message, retrieve_message, list_messages, delete_message, modify_message
-from .run import create_run, retrieve_run, list_runs, modify_run, submit_tool_output, cancel_run
+from .run import create_run, retrieve_run, list_runs, modify_run, cancel_run
 
 
 def create_thread() -> object:
@@ -124,15 +124,17 @@ class Thread:
         self.__dict__.update(**thread.__dict__)
         return thread
 
-    def create_message(self, content: str, role: str = "user") -> object:
+    def create_message(self, content: str, role: str = "user", files: list or None = None, metadata: dict or None = None) -> object:
         """
         create a new message
         :param content: str: content of the message
         :param role: str: role of the message (user or assistant)
+        :param files: list or None: list of file ids
+        :param metadata: dict or None: metadata for the message
         :return: object: message object
         """
 
-        return create_message(self.id, role, content)
+        return create_message(self.id, content, role, files, metadata)
 
     def retrieve_message(self, message_id: str) -> object:
         """

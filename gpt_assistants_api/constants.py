@@ -7,5 +7,5 @@ HEADERS = {
 }
 
 HEADERS_OLD = {
-    "Authorization: Bearer ": f"Bearer {os.environ['OPENAI_API_KEY']}",
+    "Authorization": f"Bearer {os.environ['OPENAI_API_KEY']}",
 }

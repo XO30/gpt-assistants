@@ -1,21 +1,32 @@
 from .utils import send_get_request, send_delete_request, send_post_request
 from .constants import HEADERS
+from .file import list_message_files, upload_file
 
 
-def create_message(thread_id: str, content: str, role: str = 'user') -> object:
+def create_message(thread_id: str, content: str, role: str = 'user', files: list or None = None, metadata: dict or None = None) -> object:
     """
     create a new message
     :param thread_id: str: id of the thread
     :param content: str: content of the message
     :param role: str: role of the message (user or assistant)
+    :param files: list: list of files to upload
+    :param metadata: dict: metadata to add
     :return: object: message object
     """
 
     url = f"https://api.openai.com/v1/threads/{thread_id}/messages"
-    data = {
-        "role": role,
-        "content": content
-    }
+    data = {}
+    data["role"] = role
+    data["content"] = content
+    file_ids = []
+    if files:
+        for file in files:
+            f = upload_file(file)
+            file_ids.append(f.id)
+    data["file_ids"] = file_ids
+    if metadata:
+        data["metadata"] = metadata
+
     response = send_post_request(url, HEADERS, data)
     return Message(**response)
 
@@ -154,3 +165,13 @@ class Message:
         message = modify_message(self.thread_id, self.id, metadata)
         self.__dict__.update(**message.__dict__)
         return message
+
+    def list_files(self) -> list:
+        """
+        list all files in a message
+        :return: list: list of file objects
+        """
+
+        return list_message_files(self.thread_id, self.id)
+
+

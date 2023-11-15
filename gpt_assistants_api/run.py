@@ -93,7 +93,7 @@ def cancel_run(thread_id: str, run_id: str) -> object:
     return Run(**response)
 
 
-def submit_tool_output(thread_id: str, run_id: str, tool_outputs: list) -> object:
+def submit_tool_outputs(thread_id: str, run_id: str, tool_outputs: list) -> object:
     """
     submit tool outputs
     :param thread_id: str: id of the thread
@@ -215,13 +215,13 @@ class Run:
         self.__dict__.update(**run.__dict__)
         return run
 
-    def submit_tool_output(self, tool_outputs: list) -> object:
+    def submit_tool_outputs(self, tool_outputs: list) -> object:
         """
         submit tool output
         :param tool_outputs: list: list of dictionaries of tool outputs
         :return: object: run object
         """
 
-        run = submit_tool_output(self.thread_id, self.id, tool_outputs)
+        run = submit_tool_outputs(self.thread_id, self.id, tool_outputs)
         self.__dict__.update(**run.__dict__)
         return run
