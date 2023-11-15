@@ -1,5 +1,5 @@
 from .utils import send_get_request, send_delete_request, send_post_request
-from .utils import HEADERS
+from .constants import HEADERS
 
 
 def create_message(thread_id: str, content: str, role: str = 'user') -> object:

@@ -1,6 +1,6 @@
 from .utils import send_get_request, send_post_request, send_delete_request
-from .utils import HEADERS
-from .utils import Tools
+from .constants import HEADERS
+from .tools import Tools
 
 
 def list_assistants() -> list:

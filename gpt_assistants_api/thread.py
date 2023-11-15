@@ -1,6 +1,6 @@
 from .utils import send_post_request, send_get_request, send_delete_request
-from .utils import HEADERS
-from .utils import Tools
+from .constants import HEADERS
+from .tools import Tools
 from .message import create_message, retrieve_message, list_messages, delete_message, modify_message
 from .run import create_run, retrieve_run, list_runs, modify_run, submit_tool_output, cancel_run
 

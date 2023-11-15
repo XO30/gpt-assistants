@@ -51,9 +51,10 @@ os.environ['OPENAI_API_KEY'] = API_KEY
 First you need to import some functions from the api
 
 ```python
-from src.assistant import list_assistants, retrieve_assistant, delete_assistant, modify_assistant, create_assistant
-from src.thread import create_thread, retrieve_thread, delete_thread, modify_thread
-from src.utils import Tools
+from gpt_assistants_api.assistant import list_assistants, retrieve_assistant, delete_assistant, modify_assistant,
+    create_assistant
+from gpt_assistants_api.thread import create_thread, retrieve_thread, delete_thread, modify_thread
+from gpt_assistants_api.utils import Tools
 ```
 
 ## Assistant
