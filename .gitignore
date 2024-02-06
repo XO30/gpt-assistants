@@ -164,4 +164,4 @@ cython_debug/
 # User-specific stuff
 tests/notebooks
 
-examples/
+#examples/
